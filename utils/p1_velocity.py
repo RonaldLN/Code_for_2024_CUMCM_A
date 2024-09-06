@@ -1,5 +1,5 @@
 import numpy as np
-from p1_position import calculate_spiral_positions  # Assuming p1_position.py contains the function to calculate positions
+from .p1_position import calculate_spiral_positions  # Assuming p1_position.py contains the function to calculate positions
 
 def calculate_tangent_direction(theta, pitch=0.55):
     """
