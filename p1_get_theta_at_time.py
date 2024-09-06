@@ -67,9 +67,11 @@ def find_theta_at_time(t, pitch=0.55):
     
     return theta_s
 
-# Example usage
-time = 100  # Time in seconds
-# x, y = calculate_position_at_time(time)
-# print(f"Position of the first node at time {time} seconds: x = {x:.6f}, y = {y:.6f}")
-theta_s = find_theta_at_time(time)
-print(f"Theta of the first node at time {time} seconds: theta_s = {theta_s:.6f} radians")
+
+if __name__ == "__main__":
+    # Example usage
+    time = 100  # Time in seconds
+    # x, y = calculate_position_at_time(time)
+    # print(f"Position of the first node at time {time} seconds: x = {x:.6f}, y = {y:.6f}")
+    theta_s = find_theta_at_time(time)
+    print(f"Theta of the first node at time {time} seconds: theta_s = {theta_s:.6f} radians")

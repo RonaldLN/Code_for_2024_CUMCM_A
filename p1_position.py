@@ -75,10 +75,12 @@ def calculate_spiral_positions(
 
     return positions
 
-# Example usage
-initial_theta_turns = 16  # Theta value for the first node in turns
-positions = calculate_spiral_positions(initial_theta_turns * 2 * np.pi)
 
-# Print positions or save them as needed
-for i, (x, y) in enumerate(positions):
-    print(f"Node {i + 1}: x = {x:.6f}, y = {y:.6f}")
+if __name__ == "__main__":
+    # Example usage
+    initial_theta_turns = 16  # Theta value for the first node in turns
+    positions = calculate_spiral_positions(initial_theta_turns * 2 * np.pi)
+
+    # Print positions or save them as needed
+    for i, (x, y) in enumerate(positions):
+        print(f"Node {i + 1}: x = {x:.6f}, y = {y:.6f}")
