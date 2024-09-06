@@ -47,7 +47,7 @@ def calculate_spiral_positions(
     # Convert the initial position to Cartesian coordinates
     x_1 = r_1 * np.cos(theta_1)
     y_1 = r_1 * np.sin(theta_1)
-    positions = [(x_1, y_1)]
+    positions = [(x_1, y_1, theta_1)]
 
     # Calculate positions for subsequent nodes
     theta_current = theta_1  # Start with the initial theta
@@ -67,7 +67,7 @@ def calculate_spiral_positions(
         y_next = r_next * np.sin(theta_next)
         
         # Append the new position
-        positions.append((x_next, y_next))
+        positions.append((x_next, y_next, theta_next))
         
         # Update current theta and radius for the next iteration
         theta_current = theta_next
@@ -82,5 +82,5 @@ if __name__ == "__main__":
     positions = calculate_spiral_positions(initial_theta_turns * 2 * np.pi)
 
     # Print positions or save them as needed
-    for i, (x, y) in enumerate(positions):
+    for i, (x, y, _) in enumerate(positions):
         print(f"Node {i + 1}: x = {x:.6f}, y = {y:.6f}")
