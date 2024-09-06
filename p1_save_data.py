@@ -7,7 +7,7 @@ from openpyxl import load_workbook
 cwd = os.getcwd()
 
 # Define file paths
-template_file = os.path.join(cwd, 'result1_template.xlsx')
+template_file = os.path.join(cwd, 'template', 'result1.xlsx')
 output_file = os.path.join(cwd, 'result1.xlsx')
 
 # Delete the output file if it already exists and create a new blank Excel file
