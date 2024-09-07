@@ -18,7 +18,8 @@ pd.DataFrame().to_excel(output_file)
 # Load the template Excel file
 wb = load_workbook(template_file)
 
-t = 362.993657
+# t = 362.993657
+t = 412.473837
 
 theta_s = find_theta_at_time(t)
 positions = calculate_spiral_positions(theta_s)

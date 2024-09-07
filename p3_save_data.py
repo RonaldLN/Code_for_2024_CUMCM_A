@@ -18,8 +18,10 @@ pd.DataFrame().to_excel(output_file)
 # Load the template Excel file
 wb = load_workbook(template_file)
 
-theta_s = 56.81433157908003
-pitch = 0.497662
+# theta_s = 56.81433157908003
+# pitch = 0.497662
+theta_s = 67.78172662837748
+pitch = 0.417138
 positions = calculate_spiral_positions(theta_s, pitch=pitch)
 velocities = calculate_velocities(positions)
 

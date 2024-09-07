@@ -4,8 +4,8 @@ from scipy.optimize import fsolve
 def calculate_spiral_positions(
         initial_theta, 
         pitch=0.55, 
-        d1=3.41, 
-        d=2.2, 
+        d1=3.41 - 0.275 * 2,  # 2.86
+        d=2.2 - 0.275 * 2,  # 1.65
         num_nodes=223
     ):
     """
