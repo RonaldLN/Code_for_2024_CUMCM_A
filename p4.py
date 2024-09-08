@@ -109,7 +109,7 @@ def find_optimal_u_turn_path(pitch):
     # Bounds for theta_start and theta_end
     lower_bound = 8
     upper_bound = 17
-    precision = 20
+    precision = 2
 
     res = []
 
@@ -128,40 +128,60 @@ def find_optimal_u_turn_path(pitch):
         res.append(res_i)
     return res
 
+def find_theta_end_for_r1(theta_start, pitch, target_r1=0.715, initial_step=np.pi/10, precision=1e-6):
+    """
+    Find the theta_end for a given theta_start that results in r1 being close to target_r1.
+    
+    Args:
+        theta_start (float): The starting theta.
+        pitch (float): The pitch of the spiral.
+        target_r1 (float): The target value for r1.
+        initial_step (float): The initial step size for theta_end.
+        precision (float): The acceptable difference from the target_r1.
+        
+    Returns:
+        float: The optimal theta_end value.
+    """
+    # Initialize theta_end and step size
+    theta_end = theta_start - np.pi  # Start with a reasonable guess
+    step = initial_step
+
+    while step > precision:
+        optimal_theta_end_found = False
+
+        while not optimal_theta_end_found:
+            # Calculate r1 for the current theta_end
+            _, (r1, _, _, _) = u_turn_path_length((theta_start, theta_end), pitch)
+            
+            if r1 > target_r1:
+                optimal_theta_end_found = True
+            else:
+                # Increment theta_end by the step size
+                theta_end += step
+        
+        # Reduce the step size for more precision and adjust theta_end
+        theta_end -= step  # Go back to the start of the interval where the optimal theta_end was first detected
+        step /= 10  # Reduce step size for finer checking
+
+    return theta_end
+
 if __name__ == "__main__":
-    # Example usage
-    width = 0.3  # Width of the rectangles
-    node_to_edge_distance = 0.275  # Distance from node to rectangle edge
     pitch = 1.7  # Pitch of the spiral
-    d1 = 2.2  # Initial distance from the center
 
-    # # Find the optimal starting and ending points for the U-turn
-    # optimal_thetas = find_optimal_u_turn_path(pitch)
-    # print(f"Optimal theta_start = {optimal_thetas[0]:.6f}, theta_end = {optimal_thetas[1]:.6f}")
+    # Example usage of the new function
+    # theta_start = 12  # Example value for theta_start
+    # optimal_theta_end = find_theta_end_for_r1(theta_start, pitch)
+    # print(f"For theta_start = {theta_start}, the optimal theta_end for r1 = 0.715 is approximately {optimal_theta_end:.6f}")
 
-    res = find_optimal_u_turn_path(pitch)
-    np.savetxt("p4.csv", np.array(res), delimiter=",")
+    lower_bound = 7
+    upper_bound = 15
+    precision = 100
 
-    # print info_in_12_start
-    for i in range(len(info_in_12_start)):
-        print(f"r1: {info_in_12_start[i][0]}, angle1: {info_in_12_start[i][1] / np.pi * 180}, angle2: {info_in_12_start[i][2] / np.pi * 180}, length: {info_in_12_start[i][3]}")
-
-    # use seaborn to make the plot 3d scatter plot from res
-    import seaborn as sb
-    import matplotlib.pyplot as plot
-    import numpy as np
-
-    sb.set_style("ticks")
-    N = 180
-
-    X_VAL = np.linspace(8, 17, N)
-    Y_VAL = np.linspace(8, 17, N)
-
-    X1, Y1 = np.meshgrid(X_VAL, Y_VAL)
-
-    Z1 = np.array(res)
-
-    axes = plot.axes(projection="3d")
-    axes.plot_surface(X1, Y1, Z1)
-    plot.show()
-
+    for i in range(lower_bound * precision, upper_bound * precision):
+        theta_start = i / precision
+        # print(f"theta_start = {theta_start}")
+        optimal_theta_end = find_theta_end_for_r1(theta_start, pitch)
+        # print(f"Optimal theta_end = {optimal_theta_end:.6f}")
+        # print(f"Optimal r1 = {u_turn_path_length((theta_start, optimal_theta_end), pitch)[1][0]:.6f}")
+        # print(f"Optimal path length = {u_turn_path_length((theta_start, optimal_theta_end), pitch)[0]:.6f}")
+        print(f"start: {theta_start:.6f}, end: {optimal_theta_end:.6f}, r1: {u_turn_path_length((theta_start, optimal_theta_end), pitch)[1][0]:.6f}, len: {u_turn_path_length((theta_start, optimal_theta_end), pitch)[0]:.6f}")
