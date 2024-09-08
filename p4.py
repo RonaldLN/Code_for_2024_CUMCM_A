@@ -1,6 +1,6 @@
 from utils import *
 import numpy as np
-from scipy.optimize import minimize, fsolve
+from scipy.optimize import fsolve
 
 def calculate_arc_center(position, tangent, radius):
     """
@@ -89,7 +89,9 @@ def u_turn_path_length(params, pitch):
     length2 = arc_length(r2, angle2)
     
     # Total path length is the sum of both arc lengths
-    return length1 + length2
+    return length1 + length2, (r1, angle1, angle2, length1 + length2)
+
+info_in_12_start = []
 
 def find_optimal_u_turn_path(pitch):
     """
@@ -107,16 +109,22 @@ def find_optimal_u_turn_path(pitch):
     # Bounds for theta_start and theta_end
     lower_bound = 8
     upper_bound = 17
-    precision = 100
+    precision = 20
 
     res = []
+
+    # info_in_12_start = []
+    global info_in_12_start
 
     for i in range(lower_bound * precision, upper_bound * precision):
         res_i = []
         for j in range(lower_bound * precision, upper_bound * precision):
             params = (i / precision, j / precision)
             length, sth_else = u_turn_path_length(params, pitch)
-            res_i.append(length)
+            # res_i.append(length)
+            res_i.append(length if abs(params[0] - params[1]) < np.pi else np.NaN)
+            if i == 12 * precision and abs(params[0] - params[1]) < np.pi:
+                info_in_12_start.append(sth_else)
         res.append(res_i)
     return res
 
@@ -133,6 +141,10 @@ if __name__ == "__main__":
 
     res = find_optimal_u_turn_path(pitch)
     np.savetxt("p4.csv", np.array(res), delimiter=",")
+
+    # print info_in_12_start
+    for i in range(len(info_in_12_start)):
+        print(f"r1: {info_in_12_start[i][0]}, angle1: {info_in_12_start[i][1] / np.pi * 180}, angle2: {info_in_12_start[i][2] / np.pi * 180}, length: {info_in_12_start[i][3]}")
 
     # use seaborn to make the plot 3d scatter plot from res
     import seaborn as sb
