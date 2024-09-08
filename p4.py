@@ -78,6 +78,11 @@ def u_turn_path_length(params, pitch):
     # Calculate angles for the arcs
     angle1 = np.arccos(np.dot((np.array(center2) - np.array(center1)), (np.array(pos_end) - np.array(center1))) / (r1 * r1 * 3))
     angle2 = np.arccos(np.dot((np.array(center1) - np.array(center2)), (np.array(pos_start) - np.array(center2))) / (r1 * 3 * r2))
+
+    if np.dot((center2 - center1) + (pos_end - center1), tangent_end) > 0:
+        angle1 = 2 * np.pi - angle1
+    if np.dot((center1 - center2) + (pos_start - center2), tangent_start) > 0:
+        angle2 = 2 * np.pi - angle2
     
     # Calculate arc lengths
     length1 = arc_length(r1, angle1)
@@ -99,16 +104,21 @@ def find_optimal_u_turn_path(pitch):
     Returns:
         tuple: The optimal (theta_start, theta_end) values.
     """
-    # Initial guess for theta_start and theta_end
-    initial_guess = (11, 13)
-    
     # Bounds for theta_start and theta_end
-    bounds = [(8, 17), (8, 17)]
-    
-    # Minimize the total U-turn path length
-    result = minimize(u_turn_path_length, initial_guess, args=(pitch), bounds=bounds, method='Nelder-Mead')
-    
-    return result.x  # Optimal theta_start and theta_end
+    lower_bound = 8
+    upper_bound = 17
+    precision = 100
+
+    res = []
+
+    for i in range(lower_bound * precision, upper_bound * precision):
+        res_i = []
+        for j in range(lower_bound * precision, upper_bound * precision):
+            params = (i / precision, j / precision)
+            length, sth_else = u_turn_path_length(params, pitch)
+            res_i.append(length)
+        res.append(res_i)
+    return res
 
 if __name__ == "__main__":
     # Example usage
@@ -117,6 +127,29 @@ if __name__ == "__main__":
     pitch = 1.7  # Pitch of the spiral
     d1 = 2.2  # Initial distance from the center
 
-    # Find the optimal starting and ending points for the U-turn
-    optimal_thetas = find_optimal_u_turn_path(pitch)
-    print(f"Optimal theta_start = {optimal_thetas[0]:.6f}, theta_end = {optimal_thetas[1]:.6f}")
+    # # Find the optimal starting and ending points for the U-turn
+    # optimal_thetas = find_optimal_u_turn_path(pitch)
+    # print(f"Optimal theta_start = {optimal_thetas[0]:.6f}, theta_end = {optimal_thetas[1]:.6f}")
+
+    res = find_optimal_u_turn_path(pitch)
+    np.savetxt("p4.csv", np.array(res), delimiter=",")
+
+    # use seaborn to make the plot 3d scatter plot from res
+    import seaborn as sb
+    import matplotlib.pyplot as plot
+    import numpy as np
+
+    sb.set_style("ticks")
+    N = 180
+
+    X_VAL = np.linspace(8, 17, N)
+    Y_VAL = np.linspace(8, 17, N)
+
+    X1, Y1 = np.meshgrid(X_VAL, Y_VAL)
+
+    Z1 = np.array(res)
+
+    axes = plot.axes(projection="3d")
+    axes.plot_surface(X1, Y1, Z1)
+    plot.show()
+
